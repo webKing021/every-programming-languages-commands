@@ -289,29 +289,6 @@ app.run(debug=True)
 pip install flask-debugtoolbar
 ```
 
-```python
-from flask_debugtoolbar import DebugToolbarExtension
-
-app.config['SECRET_KEY'] = 'dev-key'
-toolbar = DebugToolbarExtension(app)
-```
-
-## Configuration Best Practices
-
-### Config Classes
-```python
-class Config:
-    SECRET_KEY = 'default-key'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-
-class ProductionConfig(Config):
-    DEBUG = False
-    # Use environment variables for sensitive data
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-```
 
 ### Loading Configuration
 ```python
