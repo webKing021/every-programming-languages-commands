@@ -1,0 +1,325 @@
+# Flask Commands Reference Guide
+
+## Installation
+```
+pip install Flask
+```
+
+## Project Setup
+
+### Create a Basic Flask Project Structure
+```
+mkdir myflaskproject
+cd myflaskproject
+```
+
+### Create a Virtual Environment (Recommended)
+```
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### Install Flask in the Virtual Environment
+```
+pip install Flask
+```
+
+### Create Basic Application Files
+Create a file named `app.py` with basic Flask code:
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return 'Hello, Flask!'
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+## Running the Flask Application
+
+### Run the Development Server
+```
+# Method 1: Direct Python execution
+python app.py
+
+# Method 2: Using Flask CLI
+flask run
+```
+
+### Run with Debug Mode
+```
+# In app.py
+app.run(debug=True)
+
+# Or with Flask CLI
+flask run --debug
+```
+
+### Run on Different Port
+```
+# In app.py
+app.run(host='0.0.0.0', port=8080, debug=True)
+
+# Or with Flask CLI
+flask run --host=0.0.0.0 --port=8080
+```
+
+## Flask Environment Variables
+
+### Set Flask Application
+```
+# Windows
+set FLASK_APP=app.py
+
+# macOS/Linux
+export FLASK_APP=app.py
+```
+
+### Enable Debug Mode
+```
+# Windows
+set FLASK_DEBUG=1
+
+# macOS/Linux
+export FLASK_DEBUG=1
+```
+
+## Project Structure and Organization
+
+### Recommended Project Structure
+```
+myflaskproject/
+├── app.py             # Main application file
+├── config.py          # Configuration settings
+├── requirements.txt   # Project dependencies
+├── static/            # Static files (CSS, JS, images)
+│   ├── css/
+│   ├── js/
+│   └── images/
+├── templates/         # HTML templates
+└── venv/              # Virtual environment
+```
+
+### Creating a Flask Blueprint
+Blueprints help organize your application into components:
+
+```python
+# In blueprints/auth.py
+from flask import Blueprint
+
+auth_bp = Blueprint('auth', __name__)
+
+@auth_bp.route('/login')
+def login():
+    return 'Login Page'
+
+# In app.py
+from blueprints.auth import auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
+```
+
+## Database Integration
+
+### Flask-SQLAlchemy Setup
+```
+pip install Flask-SQLAlchemy
+```
+
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+
+# Create all tables
+with app.app_context():
+    db.create_all()
+```
+
+### Database Migrations with Flask-Migrate
+```
+pip install Flask-Migrate
+```
+
+```
+# Initialize migrations
+flask db init
+
+# Create a migration
+flask db migrate -m "Initial migration"
+
+# Apply migration
+flask db upgrade
+```
+
+## Forms and Validation
+
+### Flask-WTF Setup
+```
+pip install Flask-WTF
+```
+
+```python
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+```
+
+## Authentication
+
+### Flask-Login Setup
+```
+pip install Flask-Login
+```
+
+```python
+from flask_login import LoginManager, UserMixin, login_user
+
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+```
+
+## API Development
+
+### Flask RESTful
+```
+pip install flask-restful
+```
+
+```python
+from flask import Flask
+from flask_restful import Api, Resource
+
+app = Flask(__name__)
+api = Api(app)
+
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
+api.add_resource(HelloWorld, '/')
+```
+
+## Testing
+
+### Basic Testing
+```python
+import unittest
+from app import app
+
+class FlaskTestCase(unittest.TestCase):
+    def test_index(self):
+        tester = app.test_client(self)
+        response = tester.get('/')
+        self.assertEqual(response.status_code, 200)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Run Tests
+```
+python -m unittest discover
+```
+
+## Deployment
+
+### Generate Requirements File
+```
+pip freeze > requirements.txt
+```
+
+### Gunicorn (Production WSGI Server)
+```
+pip install gunicorn
+gunicorn app:app
+```
+
+### Environment Variables for Production
+```
+# Set to production mode
+export FLASK_ENV=production
+```
+
+## Common Flask Extensions
+
+- **Flask-SQLAlchemy**: Database ORM
+- **Flask-Migrate**: Database migrations
+- **Flask-WTF**: Form handling and validation
+- **Flask-Login**: User session management
+- **Flask-Mail**: Email sending
+- **Flask-RESTful**: RESTful API building
+- **Flask-Bcrypt**: Password hashing
+- **Flask-Cors**: Cross-Origin Resource Sharing
+
+## Debugging Tips
+
+### Debug Mode
+Enable detailed error pages and auto-reloading:
+```python
+app.run(debug=True)
+```
+
+### Flask Debug Toolbar
+```
+pip install flask-debugtoolbar
+```
+
+```python
+from flask_debugtoolbar import DebugToolbarExtension
+
+app.config['SECRET_KEY'] = 'dev-key'
+toolbar = DebugToolbarExtension(app)
+```
+
+## Configuration Best Practices
+
+### Config Classes
+```python
+class Config:
+    SECRET_KEY = 'default-key'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+class ProductionConfig(Config):
+    DEBUG = False
+    # Use environment variables for sensitive data
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+```
+
+### Loading Configuration
+```python
+app.config.from_object('config.DevelopmentConfig')
+```
+
+## Additional Resources
+
+- Official Flask Documentation: https://flask.palletsprojects.com/
+- Flask Mega-Tutorial: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+- Flask Extensions Registry: https://pypi.org/search/?c=Framework+%3A%3A+Flask

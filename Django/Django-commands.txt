@@ -1,0 +1,67 @@
+1. To create a virtual environment :
+python -m venv .venv 
+
+2. To activate virtual environment : 
+.venv\Scripts\activate 
+
+3. To install Django :
+py -m pip install Django
+
+4. To create a Django project :
+django-admin startproject <PROJECT_NAME>
+cd .\Krutarth\
+
+5. To run the created project :
+python manage.py runserver <PORT_NUMBER>
+
+6. To create an application : 
+django-admin startapp <APP_NAME>
+
+7. To connect to MySQL database
+pip install mysqlclient
+
+8. to create migration
+py manage.py makemigrations
+
+9. to migrate tables
+py manage.py migrate
+
+
+TO INSTALL TAILWIND CSS IN THE DJANGO PROJECT.
+
+1. python.exe -m pip install --upgrade pip
+
+2. pip install django-tailwind
+
+3. pip install 'django-tailwind[reload]'
+
+4. python .\manage.py tailwind init
+
+5. python manage.py tailwind install
+
+6. ADD THIS INTO settings.py : 
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'tailwind',
+    'theme',
+    'django_browser_reload',
+]
+
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+7. python manage.py tailwind start
+
+
+
